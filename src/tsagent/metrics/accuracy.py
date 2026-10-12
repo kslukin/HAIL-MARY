@@ -20,11 +20,9 @@ def quantile_columns(forecast: pd.DataFrame) -> dict[float, str]:
 
 def seasonal_naive_scale(train: pd.DataFrame, season_length: int = 7) -> pd.Series:
     """Mean absolute in-sample error of the seasonal naive forecast, per series.
-
     This is the denominator of MASE. Series with zero scale (the seasonal naive
     forecast was perfect in-sample, typical for all-zero or constant series) get
-    NaN, because dividing by zero would make MASE meaningless.
-    """
+    NaN, because dividing by zero would make MASE meaningless."""
 
     def _scale(y: pd.Series) -> float:
         values = y.to_numpy(dtype=float)
@@ -56,8 +54,8 @@ def evaluate(
     Returns:
         DataFrame indexed by unique_id with columns mase, sql (scaled quantile
         loss) and coverage (share of test points inside the lowest-highest
-        quantile interval).
-    """
+        quantile interval)."""
+    
     qs = quantile_columns(forecast)
     if 0.5 not in qs or min(qs) >= 0.5 or max(qs) <= 0.5:
         raise ValueError("forecast needs q0.5 plus at least one lower and one upper quantile")
