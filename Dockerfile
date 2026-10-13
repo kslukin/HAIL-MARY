@@ -29,6 +29,11 @@ ARG TIMESFM_REF=e51928e27119cb17bebc005be2696b75e0a9e688
 RUN test -n "$TIMESFM_REF" \
     && uv pip install "timesfm[torch] @ git+https://github.com/google-research/timesfm.git@${TIMESFM_REF}"
 
+# LightGBM needs the OpenMP runtime, which the slim image does not include.
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends libgomp1 \
+    && rm -rf /var/lib/apt/lists/*
+
 COPY src ./src
 COPY scripts ./scripts
 
