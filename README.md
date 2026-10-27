@@ -1,4 +1,4 @@
-# HAIL-MARY
+# Time-series forecasting benchmark
 
 Honest comparison of modern time-series forecasting models, with an LLM agent on top (work in progress).
 
