@@ -18,10 +18,13 @@ def main() -> None:
     parser.add_argument("--prefix", default="results/m5_n1000")
     parser.add_argument("--n-series", type=int, default=1000)
     parser.add_argument("--seed", type=int, default=0)
+    parser.add_argument("--n-windows", type=int, default=3)
     args = parser.parse_args()
 
     results = pd.read_csv(f"{args.prefix}_per_series.csv")
     mase = pivot_mase(results)
+    if mase.index.get_level_values("window").nunique() != args.n_windows:
+        raise ValueError("--n-windows does not match the comparison run")
     pd.set_option("display.width", 170)
     pd.set_option("display.max_columns", 20)
     print(f"{len(mase)} (window, series) pairs scored by all of: {list(mase.columns)}")
@@ -34,7 +37,7 @@ def main() -> None:
     long, _ = load_m5("data/raw/m5", n_series=args.n_series, seed=args.seed)
     if set(results["unique_id"]) - set(long["unique_id"]):
         raise ValueError("results do not match --n-series / --seed of the comparison run")
-    tables = segment_tables(mase, segment_features(long))
+    tables = segment_tables(mase, segment_features(long, n_windows=args.n_windows))
     print("\nMean MASE by segment (n counts window-series pairs; lower is better):")
     print(tables.round(3).to_string(index=False))
 

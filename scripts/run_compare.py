@@ -26,6 +26,7 @@ def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("--models", nargs="+", default=list(MODELS), choices=list(MODELS))
     parser.add_argument("--n-series", type=int, default=200)
+    parser.add_argument("--n-windows", type=int, default=3)
     parser.add_argument("--seed", type=int, default=0)
     parser.add_argument("--out", default="results/m5_subset")
     args = parser.parse_args()
@@ -35,7 +36,7 @@ def main() -> None:
     frames = []
     for name in args.models:
         start = time.perf_counter()
-        frames.append(run_backtest(long, MODELS[name]()))  # finishes before the time is read
+        frames.append(run_backtest(long, MODELS[name](), n_windows=args.n_windows))
         print(f"{name}: {time.perf_counter() - start:.0f}s for all windows")
     results = pd.concat(frames, ignore_index=True)
 
